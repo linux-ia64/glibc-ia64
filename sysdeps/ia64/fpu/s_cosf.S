@@ -170,7 +170,7 @@
 //==============================================================
 // general input registers:
 // r14 -> r19
-// r32 -> r45
+// r32 -> r43
 
 // predicate registers used:
 // p6 -> p14
@@ -258,6 +258,11 @@ gr_tmp                          = r41
 GR_SAVE_PFS                     = r41
 GR_SAVE_B0                      = r42
 GR_SAVE_GP                      = r43
+
+GR_Parameter_X                  = r44
+GR_Parameter_Y                  = r45
+GR_Parameter_RESULT             = r46
+GR_Parameter_TAG                = r47
 
 RODATA
 .align 16
@@ -388,7 +393,7 @@ LOCAL_OBJECT_END(double_sin_cos_beta_k4)
 GLOBAL_IEEE754_ENTRY(sinf)
 
 { .mlx
-      alloc         r32                 = ar.pfs,1,13,0,0
+      alloc         r32                 = ar.pfs,1,11,4,0
       movl  sincosf_GR_sig_inv_pi_by_16 = 0xA2F9836E4E44152A //signd of 16/pi
 }
 { .mlx
@@ -413,7 +418,7 @@ libm_alias_float_other (__sin, sin)
 GLOBAL_IEEE754_ENTRY(cosf)
 
 { .mlx
-      alloc         r32                 = ar.pfs,1,13,0,0
+      alloc         r32                 = ar.pfs,1,11,4,0
       movl  sincosf_GR_sig_inv_pi_by_16 = 0xA2F9836E4E44152A //signd of 16/pi
 }
 { .mlx
@@ -641,20 +646,39 @@ _SINCOSF_COMMON:
 ////////// x = 0/Inf/NaN path //////////////////
 _SINCOSF_SPECIAL_ARGS:
 .pred.rel "mutex",p8,p9
+
+{ .mfi
+      nop.m         999
+      fclass.m.unc  p7,p0               = f8, 0x23 // is x +/- inf?
+      nop.i         999;;
+}
+
+{ .mfi
+      nop.m         999
+(p7)  fmerge.s      f9 = f8,f8
+      nop.i         999
+}
+
 // sinf(+/-0) = +/-0
 // sinf(Inf)  = NaN
 // sinf(NaN)  = NaN
 { .mfi
       nop.m         999
 (p8)  fma.s.s0      f8                  = f8, f0, f0 // sinf(+/-0,NaN,Inf)
-      nop.i         999
+(p8)  mov           GR_Parameter_TAG    = 281
 }
 // cosf(+/-0) = 1.0
 // cosf(Inf)  = NaN
 // cosf(NaN)  = NaN
-{ .mfb
+{ .mfi
       nop.m         999
 (p9)  fma.s.s0      f8                  = f8, f0, f1 // cosf(+/-0,NaN,Inf)
+(p9)  mov           GR_Parameter_TAG    = 278
+};;
+
+{ .mbb
+      nop.m         999
+(p7)  br.cond.spnt  __libm_error_region
       br.ret.sptk   b0 // Exit for x = 0/Inf/NaN path
 };;
 
@@ -715,3 +739,55 @@ LOCAL_LIBM_END(__libm_callout_sincosf)
 .global  __libm_sin_large#
 .type    __libm_cos_large#, @function
 .global  __libm_cos_large#
+
+LOCAL_LIBM_ENTRY(__libm_error_region)
+.prologue
+{ .mfi
+        add   GR_Parameter_Y=-32,sp             // Parameter 2 value
+        nop.f 0
+.save   ar.pfs,GR_SAVE_PFS
+        mov  GR_SAVE_PFS=ar.pfs                 // Save ar.pfs
+}
+{ .mfi
+.fframe 64
+        add sp=-64,sp                           // Create new stack
+        nop.f 0
+        mov GR_SAVE_GP=gp                       // Save gp
+};;
+{ .mmi
+        stfd [GR_Parameter_Y] = f1,16           // STORE Parameter 2 on stack
+        add GR_Parameter_X = 16,sp              // Parameter 1 address
+.save   b0, GR_SAVE_B0
+        mov GR_SAVE_B0=b0                       // Save b0
+};;
+.body
+{ .mib
+        stfd [GR_Parameter_X] = f9              // STORE Parameter 1 on stack
+        add   GR_Parameter_RESULT = 0,GR_Parameter_Y  // Parameter 3 address
+        nop.b 0
+}
+{ .mib
+        stfd [GR_Parameter_Y] = f8              // STORE Parameter 3 on stack
+        add   GR_Parameter_Y = -16,GR_Parameter_Y
+        br.call.sptk b0=__libm_error_support#   // Call error handling function
+};;
+{ .mmi
+        add   GR_Parameter_RESULT = 48,sp
+        nop.m 0
+        nop.i 0
+};;
+{ .mmi
+        ldfd  f8 = [GR_Parameter_RESULT]       // Get return result off stack
+.restore sp
+        add   sp = 64,sp                       // Restore stack pointer
+        mov   b0 = GR_SAVE_B0                  // Restore return address
+};;
+{ .mib
+        mov   gp = GR_SAVE_GP                  // Restore gp
+        mov   ar.pfs = GR_SAVE_PFS             // Restore ar.pfs
+        br.ret.sptk     b0                     // Return
+};;
+
+LOCAL_LIBM_END(__libm_error_region)
+.type   __libm_error_support#,@function
+.global __libm_error_support#
