@@ -347,15 +347,10 @@ COMMON_PATH:
 (p6)  br.ret.spnt    b0    ;;         // Exit for x=0 (tan only)
 }
 
-{ .mfi
+{ .mmi
       ldfpd     tan_P14,tan_P15 = [tan_AD],16
-(p7)  frcpa.s0  f8,p9=f0,f0           // Set qnan indef if x=inf
-      mov       tan_GR_10009 = 0x10009
-}
-{ .mib
       ldfpd      tan_Q8,tan_Q9  = [tan_ADQ],16
-      nop.i 999
-(p7)  br.ret.spnt    b0    ;;         // Exit for x=inf
+      mov       tan_GR_10009 = 0x10009;;
 }
 
 { .mfi
@@ -382,6 +377,12 @@ COMMON_PATH:
       ldfpd      tan_Q6,tan_Q7  = [tan_ADQ],16
       fma.s1 TAN_W_2TO64_RSH = tan_NORM_f8,TAN_INV_PI_BY_2_2TO64,TAN_RSHF_2TO64
 };;
+
+{ .mfb
+(p7)  mov GR_Parameter_Tag = 283          // (tan)
+(p7)  frcpa.s0  f8,p9=f0,f0               // Set qnan indef if x=inf
+(p7)  br.cond.spnt __libm_error_region ;; // call error support if tan(+-inf)
+}
 
 { .mmf
       ldfpd      tan_P10,tan_P11 = [tan_AD],16
