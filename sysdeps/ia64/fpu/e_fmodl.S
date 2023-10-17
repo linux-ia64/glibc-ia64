@@ -483,6 +483,11 @@ FMOD_A_NAN_INF:
  (p8)  cmp.ne p7, p0 = GR_SIG_B, r0
        nop.i 0
 }
+{ .mfi
+       nop.m 0
+       fmerge.s FR_X = f8, f8
+       nop.i 0
+}
 ;;
 
 { .mfi
@@ -508,7 +513,12 @@ FMOD_A_NAN_INF:
 { .mfb
        nop.m 0
  (p9)  frcpa.s0 f8, p7 = f8, f9
-       br.ret.sptk b0
+ (p9)  br.ret.sptk b0
+}
+{ .mmb
+       alloc GR_ARPFS = ar.pfs, 1, 4, 4, 0
+       mov GR_Parameter_TAG = 273
+       br.sptk __libm_error_region
 }
 ;;
 
