@@ -74,8 +74,8 @@
 
 // Special cases
 //====================================================================
-// b=+/-0: return NaN, call libm_error_support
-// a=+/-Inf, a=NaN or b=NaN: return NaN
+// a=+/-Inf or b=+/-0: return NaN, call libm_error_support
+// a=NaN or b=NaN: return NaN
 
 // Registers used
 //====================================================================
@@ -412,13 +412,13 @@ FMOD_X_NAN_INF:
       nop.m 999
     // also set Denormal flag if necessary
 (p8)  fma.s0 f9=f9,f1,f0
-      nop.i 999 ;;
+(p8)  mov GR_Parameter_TAG=275 ;;
 }
 
 { .mfb
       nop.m 999
 (p8)  fma.s.s0 f8=f8,f1,f0
-      nop.b 999 ;;
+(p8)  br.spnt __libm_error_region;;
 }
 
 { .mfb
