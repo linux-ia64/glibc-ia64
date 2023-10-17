@@ -439,6 +439,9 @@ else if(_LIB_VERSIONIMF==_ISOC_)
     case powl_overflow:
     case pow_overflow:
     case powf_overflow:
+    case powl_zero_to_negative:
+    case pow_zero_to_negative:
+    case powf_zero_to_negative:
     case expl_overflow:
     case exp_overflow:
     case expf_overflow:
@@ -610,11 +613,8 @@ else if(_LIB_VERSIONIMF==_ISOC_)
     case atan2l_zero:
     case atan2_zero:
     case atan2f_zero:
-    case powl_zero_to_negative:
     case powl_neg_to_non_integer:
-    case pow_zero_to_negative:
     case pow_neg_to_non_integer:
-    case powf_zero_to_negative:
     case powf_neg_to_non_integer:
     case fmodl_by_zero:
     case fmod_by_zero:
@@ -717,6 +717,9 @@ switch(input_tag)
   case lgammal_negative:
   case lgamma_negative:
   case lgammaf_negative:
+  {
+       ERRNO_RANGE; break;
+  }
   case tgammal_negative:
   case tgamma_negative:
   case tgammaf_negative:
@@ -769,22 +772,34 @@ switch(input_tag)
        ERRNO_RANGE; break;
   }
   case atanhl_gt_one:
-  case atanhl_eq_one:
-    /* atanhl(|x| >= 1) */
+    /* atanhl(|x| > 1) */
     {
        ERRNO_DOMAIN; break;
+    }
+  case atanhl_eq_one:
+    /* atanhl(|x| == 1) */
+    {
+       ERRNO_RANGE; break;
     }
   case atanh_gt_one:
-  case atanh_eq_one:
-    /* atanh(|x| >= 1) */
+    /* atanh(|x| > 1) */
     {
        ERRNO_DOMAIN; break;
     }
+  case atanh_eq_one:
+    /* atanh(|x| == 1) */
+    {
+       ERRNO_RANGE; break;
+    }
   case atanhf_gt_one:
-  case atanhf_eq_one:
-    /* atanhf(|x| >= 1) */
+    /* atanhf(|x| > 1) */
     {
        ERRNO_DOMAIN; break;
+    }
+  case atanhf_eq_one:
+    /* atanhf(|x| == 1) */
+    {
+       ERRNO_RANGE; break;
     }
   case sqrtl_negative:
     /* sqrtl(x < 0) */
@@ -1007,17 +1022,9 @@ switch(input_tag)
        RETVAL_ZEROF; ERRNO_RANGE; break;
     }
   case powl_zero_to_zero:
-    /* powl 0**0 */
-    {
-       break;
-    }
   case pow_zero_to_zero:
-    /* pow 0**0 */
-    {
-       break;
-    }
   case powf_zero_to_zero:
-    /* powf 0**0 */
+    /* 0**0 */
     {
        break;
     }
@@ -1085,31 +1092,15 @@ switch(input_tag)
        ERRNO_DOMAIN; break;
     }
   case powl_zero_to_negative:
-    /* 0**neg */
-    {
-       ERRNO_DOMAIN; break;
-    }
   case pow_zero_to_negative:
+  case powf_zero_to_negative:
     /* 0**neg */
     {
-       ERRNO_DOMAIN; break;
-    }
-  case  powf_zero_to_negative:
-    /* 0**neg */
-    {
-       ERRNO_DOMAIN; break;
+       ERRNO_RANGE; break;
     }
   case powl_neg_to_non_integer:
-    /* neg**non_integral */
-    {
-       ERRNO_DOMAIN; break;
-    }
   case pow_neg_to_non_integer:
-    /* neg**non_integral */
-    {
-       ERRNO_DOMAIN; break;
-    }
-  case  powf_neg_to_non_integer:
+  case powf_neg_to_non_integer:
     /* neg**non-integral */
     {
        ERRNO_DOMAIN; break;
@@ -1313,6 +1304,21 @@ switch(input_tag)
     {
        ERRNO_DOMAIN; break;
     }
+  case fmodl_infinity:
+    /* fmodl(inf,y) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case fmod_infinity:
+    /* fmod(inf,y) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case fmodf_infinity:
+    /* fmodf(inf,y) */
+    {
+       ERRNO_DOMAIN; break;
+    }
   case coshl_overflow:
     /* coshl overflows */
     {
@@ -1379,6 +1385,51 @@ switch(input_tag)
    {
       ERRNO_RANGE; break;
    }
+  case cosl_infinity:
+    /* cosl(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case cos_infinity:
+    /* cos(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case cosf_infinity:
+    /* cosf(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case sinl_infinity:
+    /* sinl(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case sin_infinity:
+    /* sin(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case sinf_infinity:
+    /* sinf(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case tanl_infinity:
+    /* tanl(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case tan_infinity:
+    /* tan(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
+  case tanf_infinity:
+    /* tanf(inf) */
+    {
+       ERRNO_DOMAIN; break;
+    }
   default:
     break;
 }
@@ -2227,7 +2278,7 @@ else
          NOT_MATHERRL
          {
            WRITEL_POW_ZERO_TO_NEGATIVE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
@@ -2248,7 +2299,7 @@ else
          NOT_MATHERRD
          {
            WRITED_POW_ZERO_TO_NEGATIVE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
@@ -2269,7 +2320,7 @@ else
          NOT_MATHERRF
          {
             WRITEF_POW_ZERO_TO_NEGATIVE;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
@@ -2310,7 +2361,7 @@ else
          NOT_MATHERRD
          {
             WRITED_POW_NEG_TO_NON_INTEGER;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
@@ -2330,7 +2381,7 @@ else
          NOT_MATHERRF
          {
             WRITEF_POW_NEG_TO_NON_INTEGER;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
@@ -3064,12 +3115,12 @@ else
          NOT_MATHERRL
          {
            WRITEL_ATANH_EQ_ONE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
-         NOT_MATHERRL {ERRNO_DOMAIN;}
+         NOT_MATHERRL {ERRNO_RANGE;}
        }
        break;
     }
@@ -3082,12 +3133,12 @@ else
          NOT_MATHERRD
          {
            WRITED_ATANH_EQ_ONE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
-       NOT_MATHERRD {ERRNO_DOMAIN;}
+       NOT_MATHERRD {ERRNO_RANGE;}
        }
        break;
     }
@@ -3100,12 +3151,12 @@ else
          NOT_MATHERRF
          {
            WRITEF_ATANH_EQ_ONE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
-         NOT_MATHERRF {ERRNO_DOMAIN;}
+         NOT_MATHERRF {ERRNO_RANGE;}
        }
        break;
     }
@@ -3167,13 +3218,13 @@ else
          NOT_MATHERRL
          {
             WRITEL_GAMMA_NEGATIVE;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALL;
-         NOT_MATHERRL {ERRNO_DOMAIN;}
+         NOT_MATHERRL {ERRNO_RANGE;}
        }
        *(long double *)retval = excl.retval;
        break;
@@ -3188,13 +3239,13 @@ else
          NOT_MATHERRD
          {
             WRITED_GAMMA_NEGATIVE;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALD;
-         NOT_MATHERRD {ERRNO_DOMAIN;}
+         NOT_MATHERRD {ERRNO_RANGE;}
        }
        *(double *)retval = exc.retval;
        break;
@@ -3209,13 +3260,13 @@ else
          NOT_MATHERRF
          {
             WRITEF_GAMMA_NEGATIVE;
-            ERRNO_DOMAIN;
+            ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALF;
-         NOT_MATHERRF {ERRNO_DOMAIN;}
+         NOT_MATHERRF {ERRNO_RANGE;}
        }
        *(float *)retval = excf.retval;
        break;
@@ -3278,13 +3329,13 @@ else
          NOT_MATHERRL
          {
            WRITEL_LGAMMA_NEGATIVE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALL;
-         NOT_MATHERRL {ERRNO_DOMAIN;}
+         NOT_MATHERRL {ERRNO_RANGE;}
        }
        *(long double *)retval = excl.retval;
        break;
@@ -3299,13 +3350,13 @@ else
          NOT_MATHERRD
          {
            WRITED_LGAMMA_NEGATIVE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALD;
-         NOT_MATHERRD {ERRNO_DOMAIN;}
+         NOT_MATHERRD {ERRNO_RANGE;}
        }
        *(double *)retval = exc.retval;
        break;
@@ -3320,13 +3371,13 @@ else
          NOT_MATHERRF
          {
            WRITEF_LGAMMA_NEGATIVE;
-           ERRNO_DOMAIN;
+           ERRNO_RANGE;
          }
        }
        else
        {
          RETVAL_HUGE_VALF;
-         NOT_MATHERRF {ERRNO_DOMAIN;}
+         NOT_MATHERRF {ERRNO_RANGE;}
        }
        *(float *)retval = excf.retval;
        break;
