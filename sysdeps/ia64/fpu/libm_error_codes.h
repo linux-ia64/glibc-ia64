@@ -194,7 +194,11 @@ typedef enum
   nextafterl_underflow, nextafter_underflow,
   nextafterf_underflow,                                /* 267, 268, 269 */
   nexttowardl_underflow, nexttoward_underflow,
-  nexttowardf_underflow                                /* 270, 271, 272 */
+  nexttowardf_underflow,                               /* 270, 271, 272 */
+  fmodl_infinity, fmod_infinity, fmodf_infinity,       /* 273, 274, 275 */
+  cosl_infinity, cos_infinity, cosf_infinity,          /* 276, 277, 278 */
+  sinl_infinity, sin_infinity, sinf_infinity,          /* 279, 280, 281 */
+  tanl_infinity, tan_infinity, tanf_infinity,          /* 282, 283, 284 */
 } error_types;
 
 #define LIBM_ERROR __libm_error_support
