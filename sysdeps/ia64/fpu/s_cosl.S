@@ -746,12 +746,16 @@ GR_SAVE_B0     = r39
 GR_SAVE_GP     = r40
 GR_SAVE_PFS    = r41
 
+GR_Parameter_X = r59
+GR_Parameter_Y = r60
+GR_Parameter_RESULT = r61
+GR_Parameter_TAG = r62
 
 .section .text
 
 GLOBAL_IEEE754_ENTRY(sinl)
 { .mlx
-      alloc r32 = ar.pfs,0,27,2,0
+      alloc r32 = ar.pfs,1,26,4,0
       movl GR_sig_inv_pi = 0xa2f9836e4e44152a // significand of 1/pi
 }
 { .mlx
@@ -777,7 +781,7 @@ libm_alias_ldouble_other (__sin, sin)
 
 GLOBAL_IEEE754_ENTRY(cosl)
 { .mlx
-      alloc r32 = ar.pfs,0,27,2,0
+      alloc r32 = ar.pfs,1,26,4,0
       movl GR_sig_inv_pi = 0xa2f9836e4e44152a // significand of 1/pi
 }
 { .mlx
@@ -2278,13 +2282,31 @@ SINCOSL_DENORMAL:
 SINCOSL_SPECIAL:
 { .mfb
         nop.m 999
+        fclass.m.unc p6,p0 = f8, 0x23 // is x +/- inf?
+        nop.b 999;;
+}
+
+{ .mfi
+        nop.m 999
+(p6)    fmerge.s f9 = f8,f8
+(p6)    cmp.eq.unc p7, p8 = 0x1, GR_Sin_or_Cos;;
+}
+
+{ .mmf
+(p7)    mov GR_Parameter_TAG = 276        // (cosl)
+(p8)    mov GR_Parameter_TAG = 279        // (sinl)
 //
 //      Path for Arg = +/- QNaN, SNaN, Inf
 //      Invalid can be raised. SNaNs
 //      become QNaNs
 //
         fmpy.s0 FR_Result = FR_Input_X, f0
-        br.ret.sptk   b0 ;;
+}
+
+{ .mbb
+        nop.m 999
+(p6)    br.cond.spnt __libm_error_region
+        br.ret.sptk b0 ;;
 }
 
 GLOBAL_IEEE754_END(cosl)
@@ -2364,3 +2386,55 @@ SINCOSL_ARG_TOO_LARGE:
 LOCAL_LIBM_END(__libm_callout)
 .type   __libm_pi_by_2_reduce#,@function
 .global __libm_pi_by_2_reduce#
+
+LOCAL_LIBM_ENTRY(__libm_error_region)
+.prologue
+{ .mfi
+        add   GR_Parameter_Y=-32,sp             // Parameter 2 value
+        nop.f 0
+.save   ar.pfs,GR_SAVE_PFS
+        mov  GR_SAVE_PFS=ar.pfs                 // Save ar.pfs
+}
+{ .mfi
+.fframe 64
+        add sp=-64,sp                           // Create new stack
+        nop.f 0
+        mov GR_SAVE_GP=gp                       // Save gp
+};;
+{ .mmi
+        stfd [GR_Parameter_Y] = f1,16           // STORE Parameter 2 on stack
+        add GR_Parameter_X = 16,sp              // Parameter 1 address
+.save   b0, GR_SAVE_B0
+        mov GR_SAVE_B0=b0                       // Save b0
+};;
+.body
+{ .mib
+        stfd [GR_Parameter_X] = f9              // STORE Parameter 1 on stack
+        add   GR_Parameter_RESULT = 0,GR_Parameter_Y  // Parameter 3 address
+        nop.b 0
+}
+{ .mib
+        stfd [GR_Parameter_Y] = f8              // STORE Parameter 3 on stack
+        add   GR_Parameter_Y = -16,GR_Parameter_Y
+        br.call.sptk b0=__libm_error_support#   // Call error handling function
+};;
+{ .mmi
+        add   GR_Parameter_RESULT = 48,sp
+        nop.m 0
+        nop.i 0
+};;
+{ .mmi
+        ldfd  f8 = [GR_Parameter_RESULT]       // Get return result off stack
+.restore sp
+        add   sp = 64,sp                       // Restore stack pointer
+        mov   b0 = GR_SAVE_B0                  // Restore return address
+};;
+{ .mib
+        mov   gp = GR_SAVE_GP                  // Restore gp
+        mov   ar.pfs = GR_SAVE_PFS             // Restore ar.pfs
+        br.ret.sptk     b0                     // Return
+};;
+
+LOCAL_LIBM_END(__libm_error_region)
+.type   __libm_error_support#,@function
+.global __libm_error_support#
