@@ -3071,21 +3071,32 @@ TANL_UNSUPPORTED:
 
 { .mfi
       nop.m 999
-(p6)  fclass.m p6, p7 = f8, 0x7         // Test for zero (cotl only)
+(p6)  fclass.m.unc p6, p0 = f8, 0x7     // Test for zero (cotl only)
+      nop.i 999
+}
+;;
+{ .mfi
+      nop.m 999
+(p7)  fclass.m.unc p7, p0 = f8, 0x23    // Test for inf (tanl only)
       nop.i 999
 }
 ;;
 
 .pred.rel "mutex", p6, p7
-{ .mfi
+{ .mfb
 (p6)  mov GR_Parameter_Tag = 225        // (cotl)
 (p6)  frcpa.s0  f8, p0 = f1, f8         // cotl(+-0) = +-Inf
-      nop.i 999
+(p6)  br.cond.spnt __libm_error_region;;
+}
+{ .mfb
+(p7)  mov GR_Parameter_Tag = 282        // (tanl)
+      fmpy.s0 f8 = f8, f0
+(p7)  br.cond.spnt __libm_error_region;;
 }
 { .mfb
       nop.m 999
-(p7)  fmpy.s0 f8 = f8, f0
-(p7)  br.ret.sptk b0
+      nop.f 999
+      br.ret.sptk b0
 }
 ;;
 
