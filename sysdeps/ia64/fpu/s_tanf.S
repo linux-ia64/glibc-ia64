@@ -300,11 +300,11 @@ Common_Path:
 { .mfi
       cmp.ge    p6, p0      = rSignMask, rExpCut    // p6 = (E => 0x10009)
 (p8)  frcpa.s0  f8, p0      = f0, f0                // Set qnan indef if x=inf
-      mov GR_Parameter_Tag  = 227                   // (cotf)
+      mov GR_Parameter_Tag  = 284                   // (tanf)
 }
 { .mbb
       ldfe      fPiby2      = [rCoeffB], 16
-(p8)  br.ret.spnt b0                                // Exit for x=inf
+(p8)  br.cond.spnt __libm_error_region              // call error support if tanf(+-0)
 (p6)  br.cond.spnt Huge_Argument                    // Branch if |x|>=2^10
 }
 ;;
@@ -312,7 +312,7 @@ Common_Path:
 { .mfi
       nop.m     0
 (p11) fclass.m.unc p6, p0   = f8, 0x07              // Test for x=0 (for cotf)
-      nop.i     0
+      mov GR_Parameter_Tag  = 227                   // (cotf)
 }
 { .mfb
       nop.m     0
