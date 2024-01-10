@@ -27,6 +27,11 @@
 
 volatile unsigned v = 0xdeadbeef;
 
+#ifdef __ia64__
+extern int __clone2 (int (*__fn) (void *__arg), void *__child_stack_base,
+		     size_t __child_stack_size, int __flags, void *__arg, ...);
+#endif
+
 int child_fn(void *arg)
 {
   puts ("FAIL: in child_fn(); should not be here");
@@ -54,7 +59,11 @@ do_clone (int (*fn)(void *), void *stack)
   unsigned int n = v;
   unsigned int o = v;
 
+#ifdef __ia64__
+  result = __clone2 (fn, stack, 0, 0, NULL, NULL, NULL);
+#else
   result = clone (fn, stack, 0, NULL);
+#endif
 
   /* Check that clone does not clobber call-saved registers.  */
   TEST_VERIFY (a == v && b == v && c == v && d == v && e == v && f == v
