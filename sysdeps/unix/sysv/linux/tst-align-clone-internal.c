@@ -44,7 +44,11 @@ do_test (void)
   if (TEST_STACK_ALIGN ())
     FAIL_EXIT1 ("stack alignment failed");
 
-#define STACK_SIZE 128 * 1024
+#ifdef __ia64__
+# define STACK_SIZE 256 * 1024
+#else
+# define STACK_SIZE 128 * 1024
+#endif
   char st[STACK_SIZE] __attribute__ ((aligned));
   struct clone_args clone_args =
     {
