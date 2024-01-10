@@ -179,7 +179,9 @@ __attribute ((always_inline))
 guard_position (void *mem, size_t size, size_t guardsize, const struct pthread *pd,
 		size_t pagesize_m1)
 {
-#if _STACK_GROWS_DOWN
+#ifdef NEED_SEPARATE_REGISTER_STACK
+  return mem + (((size - guardsize) / 2) & ~pagesize_m1);
+#elif _STACK_GROWS_DOWN
   return mem;
 #elif _STACK_GROWS_UP
   return (char *) (((uintptr_t) pd - guardsize) & ~pagesize_m1);
@@ -218,7 +220,7 @@ setup_stack_prot (char *mem, size_t size, struct pthread *pd,
     {
       const int prot = stack_prot ();
       char *guardend = guard + guardsize;
-#if _STACK_GROWS_DOWN
+#if _STACK_GROWS_DOWN && !defined(NEED_SEPARATE_REGISTER_STACK)
       /* As defined at guard_position, for architectures with downward stack
 	 the guard page is always at start of the allocated area.  */
       if (__mprotect (guardend, size - guardsize, prot) != 0)
@@ -297,7 +299,7 @@ adjust_stack_prot (char *mem, size_t size, struct pthread *pd,
       if (pd->stack_mode == ALLOCATE_GUARD_MADV_GUARD)
 	{
 	  void *slack =
-#if _STACK_GROWS_DOWN
+#if _STACK_GROWS_DOWN && !defined(NEED_SEPARATE_REGISTER_STACK)
 	    mem + guardsize;
 #else
 	    guard_position (mem, size, pd->guardsize, pd, pagesize_m1);
@@ -307,7 +309,7 @@ adjust_stack_prot (char *mem, size_t size, struct pthread *pd,
       else if (pd->stack_mode == ALLOCATE_GUARD_PROT_NONE)
 	{
 	  const int prot = stack_prot ();
-#if _STACK_GROWS_DOWN
+#if _STACK_GROWS_DOWN && !defined(NEED_SEPARATE_REGISTER_STACK)
 	  return __mprotect (mem + guardsize, slacksize, prot) == 0;
 #else
 	  char *new_guard = (char *)(((uintptr_t) pd - guardsize)
@@ -332,7 +334,7 @@ advise_stack_range (void *mem, size_t size, uintptr_t pd, size_t guardsize)
 {
   uintptr_t sp = (uintptr_t) CURRENT_STACK_FRAME;
   size_t pagesize_m1 = __getpagesize () - 1;
-#if _STACK_GROWS_DOWN
+#if _STACK_GROWS_DOWN && !defined(NEED_SEPARATE_REGISTER_STACK)
   size_t freesize = (sp - (uintptr_t) mem) & ~pagesize_m1;
   assert (freesize < size);
   if (freesize > PTHREAD_STACK_MIN)
@@ -667,7 +669,7 @@ name_stack_maps (struct pthread *pd, bool set)
 {
   size_t adjust = pd->stack_mode == ALLOCATE_GUARD_PROT_NONE ?
     pd->guardsize : 0;
-#if _STACK_GROWS_DOWN
+#if _STACK_GROWS_DOWN && !defined(NEED_SEPARATE_REGISTER_STACK)
   void *stack = pd->stackblock + adjust;
 #else
   void *stack = pd->stackblock;
