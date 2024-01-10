@@ -262,6 +262,10 @@ class Context(object):
                         os_name='linux-gnu')
         self.add_config(arch='i686',
                         os_name='gnu')
+        self.add_config(arch='ia64',
+                        os_name='linux-gnu',
+                        first_gcc_cfg=['--with-system-libunwind'],
+                        binutils_cfg=['--enable-obsolete'])
         self.add_config(arch='loongarch32',
                         os_name='linux-gnuf64',
                         gcc_cfg=['--with-arch=la32v1.0', '--disable-multilib'])
@@ -1374,6 +1378,7 @@ def install_linux_headers(policy, cmdlist):
                 'i586': 'x86',
                 'i686': 'x86',
                 'i786': 'x86',
+                'ia64': 'ia64',
                 'loongarch32': 'loongarch',
                 'loongarch64': 'loongarch',
                 'm68k': 'm68k',
