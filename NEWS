@@ -844,8 +844,6 @@ Deprecated and removed features, and other changes affecting compatibility:
   replacement library or its dependencies use dynamic TLS instead of
   initial-exec TLS.
 
-* The ia64*-*-linux-gnu configurations are no longer supported.
-
 Changes to build and runtime requirements:
 
 * Building on LoongArch requires at a minimum binutils 2.41 for vector
