@@ -60,7 +60,11 @@ do_test (void)
       return 1;
     }
 
-#define STACK_SIZE 128 * 1024
+#ifdef __ia64__
+# define STACK_SIZE 256 * 1024
+#else
+# define STACK_SIZE 128 * 1024
+#endif
   char st[STACK_SIZE] __attribute__ ((aligned));
   struct clone_args clone_args =
     {
