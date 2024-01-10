@@ -96,7 +96,13 @@ _dl_make_stacks_executable (void **stack_endp)
 int
 __nptl_change_stack_perm (struct pthread *pd)
 {
-#if _STACK_GROWS_DOWN
+#ifdef NEED_SEPARATE_REGISTER_STACK
+  size_t pagemask = __getpagesize () - 1;
+  void *stack = (pd->stackblock
+		 + (((((pd->stackblock_size - pd->guardsize) / 2)
+		      & pagemask) + pd->guardsize) & pagemask));
+  size_t len = pd->stackblock + pd->stackblock_size - stack;
+#elif _STACK_GROWS_DOWN
   void *stack = pd->stackblock + pd->guardsize;
   size_t len = pd->stackblock_size - pd->guardsize;
 #elif _STACK_GROWS_UP
