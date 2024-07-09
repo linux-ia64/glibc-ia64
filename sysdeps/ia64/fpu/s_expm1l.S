@@ -676,6 +676,7 @@ GLOBAL_IEEE754_ENTRY(expm1l)
 ;;
 
 GLOBAL_IEEE754_END(expm1l)
+libm_hidden_def (__expm1l)
 libm_alias_ldouble_other (__expm1, expm1)
 
 
