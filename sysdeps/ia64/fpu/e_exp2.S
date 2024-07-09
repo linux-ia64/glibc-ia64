@@ -226,7 +226,7 @@ LOCAL_OBJECT_END(T_table)
 
 
 .section .text
-WEAK_LIBM_ENTRY(exp2)
+GLOBAL_IEEE754_ENTRY(exp2)
 
 
 {.mfi
@@ -492,7 +492,7 @@ OUT_RANGE_exp2:
 }
 ;;
 
-WEAK_LIBM_END(exp2)
+GLOBAL_IEEE754_END(exp2)
 libm_alias_double_other (__exp2, exp2)
 #ifdef SHARED
 .symver exp2,exp2@@GLIBC_2.29
