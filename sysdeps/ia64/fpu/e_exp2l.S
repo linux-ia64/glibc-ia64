@@ -375,7 +375,7 @@ LOCAL_OBJECT_END(D_table)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(exp2l)
+GLOBAL_IEEE754_ENTRY(exp2l)
 
 {.mii
        // get exponent
@@ -744,8 +744,8 @@ OUT_RANGE_exp2l:
 }
 
 
-GLOBAL_LIBM_END(exp2l)
-libm_alias_ldouble_other (exp2, exp2)
+GLOBAL_IEEE754_END(exp2l)
+libm_alias_ldouble_other (__exp2, exp2)
 
 
 LOCAL_LIBM_ENTRY(__libm_error_region)
