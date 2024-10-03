@@ -40,8 +40,8 @@ struct __ia64_fpreg_mcontext
   {
     union
       {
-	unsigned long __ctx(bits)[2];
-      } __ctx(u);
+	unsigned long __ctx(__bits)[2];
+      } __ctx(__u);
   } __attribute__ ((__aligned__ (16)));
 
 typedef struct
