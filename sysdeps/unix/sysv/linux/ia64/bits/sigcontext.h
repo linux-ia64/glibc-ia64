@@ -33,8 +33,8 @@ struct __ia64_fpreg
   {
     union
       {
-	unsigned long bits[2];
-      } u;
+	unsigned long __bits[2];
+      } __u;
   } __attribute__ ((__aligned__ (16)));
 
 struct sigcontext
