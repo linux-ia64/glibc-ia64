@@ -104,7 +104,7 @@ fRem       = f13
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(roundl)
+GLOBAL_LIBM_ENTRY(__roundl)
 
 { .mfi
       getf.exp         rSignexp  = f8        // Get signexp, recompute if unorm
@@ -229,5 +229,5 @@ ROUND_UNORM:
 }
 ;;
 
-GLOBAL_LIBM_END(roundl)
-libm_alias_ldouble_other (round, round)
+GLOBAL_LIBM_END(__roundl)
+libm_alias_ldouble_other (__round, round)
