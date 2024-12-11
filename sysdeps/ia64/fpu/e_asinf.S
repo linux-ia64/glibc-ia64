@@ -250,7 +250,7 @@ LOCAL_OBJECT_END(asinf_coeff_2_table)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(asinf)
+GLOBAL_IEEE754_ENTRY(asinf)
 
 // Load the addresses of the two tables.
 // Then, load the coefficients and other constants.
@@ -581,8 +581,8 @@ ASINF_ABS_ONE:
 }
 ;;
 
-GLOBAL_LIBM_END(asinf)
-libm_alias_float_other (asin, asin)
+GLOBAL_IEEE754_END(asinf)
+libm_alias_float_other (__asin, asin)
 
 // Stack operations when calling error support.
 //       (1)               (2)
