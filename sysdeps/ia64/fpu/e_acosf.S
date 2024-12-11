@@ -247,7 +247,7 @@ LOCAL_OBJECT_END(acosf_coeff_2_table)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(acosf)
+GLOBAL_IEEE754_ENTRY(acosf)
 
 // Load the addresses of the two tables.
 // Then, load the coefficients and other constants.
@@ -598,8 +598,8 @@ ACOSF_ABS_ONE:
       br.ret.sptk b0 ;;
 }
 
-GLOBAL_LIBM_END(acosf)
-libm_alias_float_other (acos, acos)
+GLOBAL_IEEE754_END(acosf)
+libm_alias_float_other (__acos, acos)
 
 
 // Stack operations when calling error support.
