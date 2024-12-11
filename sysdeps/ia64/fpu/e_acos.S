@@ -256,7 +256,7 @@ data8 0x3EDE18BA080E9098 //B12
 LOCAL_OBJECT_END(acos_base_range_table)
 
 .section .text
-GLOBAL_LIBM_ENTRY(acos)
+GLOBAL_IEEE754_ENTRY(acos)
 acos_unnormal_back:
 { .mfi
       getf.d             rXBits = f8 // grab bits of input value
@@ -820,8 +820,8 @@ acos_abs_gt_1:
       br.cond.sptk       __libm_error_region
 }
 ;;
-GLOBAL_LIBM_END(acos)
-libm_alias_double_other (acos, acos)
+GLOBAL_IEEE754_END(acos)
+libm_alias_double_other (__acos, acos)
 
 
 
