@@ -253,7 +253,7 @@ LOCAL_OBJECT_END(asin_base_range_table)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(asin)
+GLOBAL_IEEE754_ENTRY(asin)
 asin_unnormal_back:
 { .mfi
       getf.d             rXBits = f8 // grab bits of input value
@@ -796,8 +796,8 @@ asin_abs_gt_1:
       br.cond.sptk       __libm_error_region
 }
 ;;
-GLOBAL_LIBM_END(asin)
-libm_alias_double_other (asin, asin)
+GLOBAL_IEEE754_END(asin)
+libm_alias_double_other (__asin, asin)
 
 
 
