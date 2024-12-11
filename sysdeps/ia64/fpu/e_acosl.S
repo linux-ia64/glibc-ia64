@@ -775,7 +775,7 @@ F_AS = f117
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(acosl)
+GLOBAL_IEEE754_ENTRY(acosl)
 
 {.mfi
        // get exponent, mantissa (rounded to double precision) of s
@@ -2479,8 +2479,8 @@ acosl_SPECIAL_CASES:
 }
 
 
-GLOBAL_LIBM_END(acosl)
-libm_alias_ldouble_other (acos, acos)
+GLOBAL_IEEE754_END(acosl)
+libm_alias_ldouble_other (__acos, acos)
 
 
 LOCAL_LIBM_ENTRY(__libm_error_region)
