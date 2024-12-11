@@ -769,7 +769,7 @@ F_2M128 = f115
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(asinl)
+GLOBAL_IEEE754_ENTRY(asinl)
 
 {.mfi
        // get exponent, mantissa (rounded to double precision) of s
@@ -2455,8 +2455,8 @@ SMALL_S:
 }
 
 
-GLOBAL_LIBM_END(asinl)
-libm_alias_ldouble_other (asin, asin)
+GLOBAL_IEEE754_END(asinl)
+libm_alias_ldouble_other (__asin, asin)
 
 
 
