@@ -180,7 +180,7 @@ LOCAL_OBJECT_END(atanf_coeff_2_table)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(atanf)
+GLOBAL_IEEE754_ENTRY(atanf)
 
 {     .mfi
      alloc      r32                  = ar.pfs,1,2,0,0
@@ -551,5 +551,5 @@ ATANF_X_INF_NAN_ZERO:
 }
 ;;
 
-GLOBAL_LIBM_END(atanf)
-libm_alias_float_other (atan, atan)
+GLOBAL_IEEE754_END(atanf)
+libm_alias_float_other (__atan, atan)
