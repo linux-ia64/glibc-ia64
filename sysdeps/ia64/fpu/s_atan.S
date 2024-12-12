@@ -265,7 +265,7 @@ LOCAL_OBJECT_END(atan2_tb2)
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(atan)
+GLOBAL_IEEE754_ENTRY(atan)
 
 { .mfi
            nop.m 999
@@ -749,5 +749,5 @@ GLOBAL_LIBM_ENTRY(atan)
 ;;
 }
 
-GLOBAL_LIBM_END(atan)
-libm_alias_double_other (atan, atan)
+GLOBAL_IEEE754_END(atan)
+libm_alias_double_other (__atan, atan)
