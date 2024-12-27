@@ -733,6 +733,23 @@ rtld_hidden_def (_dl_deallocate_tls)
 
 
 #ifdef SHARED
+/* The __tls_get_addr function has two basic forms which differ in the
+   arguments.  The IA-64 form takes two parameters, the module ID and
+   offset.  The form used, among others, on IA-32 takes a reference to
+   a special structure which contain the same information.  The second
+   form seems to be more often used (in the moment) so we default to
+   it.  Users of the IA-64 form have to provide adequate definitions
+   of the following macros.  */
+# ifndef GET_ADDR_ARGS
+#  define GET_ADDR_ARGS tls_index *ti
+#  define GET_ADDR_PARAM ti
+# endif
+# ifndef GET_ADDR_MODULE
+#  define GET_ADDR_MODULE ti->ti_module
+# endif
+# ifndef GET_ADDR_OFFSET
+#  define GET_ADDR_OFFSET ti->ti_offset
+# endif
 
 /* Allocate one DTV entry.  */
 static struct dtv_pointer
@@ -928,6 +945,7 @@ _dl_update_slotinfo (unsigned long int req_modid, size_t new_gen)
   return the_map;
 }
 
+# ifndef DONT_USE_TLS_INDEX
 /* Adjust the TLS variable pointer using the TLS descriptor offset and
    the ABI-specific offset.  */
 static inline void *
@@ -1016,6 +1034,7 @@ update_get_addr (tls_index *ti, size_t gen)
 
   return tls_get_addr_adjust (p, ti);
 }
+# endif /* DONT_USE_TLS_INDEX */
 
 /* For all machines that have a non-macro version of __tls_get_addr, we
    want to use rtld_hidden_proto/rtld_hidden_def in order to call the
@@ -1023,13 +1042,14 @@ update_get_addr (tls_index *ti, size_t gen)
    in ld.so for __tls_get_addr.  */
 
 #ifndef __tls_get_addr
-extern void * __tls_get_addr (tls_index *ti);
+extern void * __tls_get_addr (GET_ADDR_ARGS);
 rtld_hidden_proto (__tls_get_addr)
 rtld_hidden_def (__tls_get_addr)
 #endif
 
 /* The generic dynamic and local dynamic model cannot be used in
    statically linked applications.  */
+# ifndef DONT_USE_TLS_INDEX
 void *
 __tls_get_addr (tls_index *ti)
 {
@@ -1067,6 +1087,10 @@ __tls_get_addr (tls_index *ti)
 
   return tls_get_addr_adjust (p, ti);
 }
+# else
+void *
+__tls_get_addr (GET_ADDR_ARGS) {}
+# endif /* DONT_USE_TLS_INDEX */
 #endif /* SHARED */
 
 
