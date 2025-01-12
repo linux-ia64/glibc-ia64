@@ -1,5 +1,5 @@
 /* Definition for thread-local data handling.  nptl/IA-64 version.
-   Copyright (C) 2003-2024 Free Software Foundation, Inc.
+   Copyright (C) 2003-2025 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -27,14 +27,14 @@
 # include <stdlib.h>
 # include <list.h>
 # include <dl-dtv.h>
+// for __thread_self
+# include <thread_pointer.h>
 
 typedef struct
 {
   dtv_t *dtv;
   void *__private;
 } tcbhead_t;
-
-register struct pthread *__thread_self __asm__("r13");
 
 # define TLS_MULTIPLE_THREADS_IN_TCB 1
 
