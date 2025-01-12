@@ -1,5 +1,5 @@
 /* Thread-local storage handling in the ELF dynamic linker.  IA-64 version.
-   Copyright (C) 2002-2024 Free Software Foundation, Inc.
+   Copyright (C) 2002-2025 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,6 +16,8 @@
    License along with the GNU C Library; if not, see
    <https://www.gnu.org/licenses/>.  */
 
+#ifndef _DL_TLS_H
+#define _DL_TLS_H
 
 /* On IA-64 the __tls_get_addr function take the module ID and the
    offset as parameters.  */
@@ -35,3 +37,5 @@
 #define TLS_TP_OFFSET 0
 
 extern void *__tls_get_addr (size_t m, size_t offset);
+
+#endif /* _DL_TLS_H */
