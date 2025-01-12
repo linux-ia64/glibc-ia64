@@ -27,4 +27,8 @@
 /* We have no tls_index type.  */
 #define DONT_USE_TLS_INDEX	1
 
+/* Dynamic thread vector pointers point to the start of each
+   TLS block.  */
+#define TLS_DTV_OFFSET 0
+
 extern void *__tls_get_addr (size_t m, size_t offset);
