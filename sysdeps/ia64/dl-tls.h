@@ -31,4 +31,7 @@
    TLS block.  */
 #define TLS_DTV_OFFSET 0
 
+/* Static TLS offsets are relative to the unadjusted thread pointer.  */
+#define TLS_TP_OFFSET 0
+
 extern void *__tls_get_addr (size_t m, size_t offset);
