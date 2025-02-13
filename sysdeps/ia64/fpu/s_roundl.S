@@ -230,4 +230,4 @@ ROUND_UNORM:
 ;;
 
 GLOBAL_LIBM_END(__roundl)
-libm_alias_ldouble_other (__round, round)
+libm_alias_ldouble (__round, round)
