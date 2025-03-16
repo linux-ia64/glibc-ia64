@@ -794,7 +794,7 @@ FR_NBig             = f79
 
 
 .section .text
-GLOBAL_LIBM_ENTRY(powl)
+GLOBAL_IEEE754_ENTRY(powl)
 //
 //     Get significand of x.  It is the critical path.
 //
@@ -2753,7 +2753,7 @@ POWL_64_SQRT:
 }
 ;;
 
-GLOBAL_LIBM_END(powl)
+GLOBAL_IEEE754_END(powl)
 libm_alias_ldouble_other (pow, pow)
 
 
