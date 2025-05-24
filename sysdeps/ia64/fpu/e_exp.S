@@ -737,6 +737,7 @@ EXP_UNDERFLOW_ZERO:
 ;;
 
 GLOBAL_IEEE754_END(exp)
+libm_hidden_def (__exp)
 libm_alias_double_other (__exp, exp)
 #ifdef SHARED
 .symver exp,exp@@GLIBC_2.29
