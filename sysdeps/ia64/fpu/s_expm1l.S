@@ -1378,6 +1378,7 @@ EXP_64_UNSUPPORTED:
 ;;
 
 GLOBAL_IEEE754_END(expl)
+libm_hidden_def (__expl)
 libm_alias_ldouble_other (__exp, exp)
 
 LOCAL_LIBM_ENTRY(__libm_error_region)
