@@ -19,7 +19,7 @@
 #include <fenv.h>
 
 int
-feclearexcept (int excepts)
+__feclearexcept (int excepts)
 {
   fenv_t fpsr;
 
@@ -34,4 +34,6 @@ feclearexcept (int excepts)
   /* success */
   return 0;
 }
+weak_alias (__feclearexcept, feclearexcept)
+libm_hidden_def (__feclearexcept)
 libm_hidden_def (feclearexcept)
