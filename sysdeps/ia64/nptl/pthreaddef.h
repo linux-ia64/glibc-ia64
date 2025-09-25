@@ -30,6 +30,18 @@
 /* Minimal stack size after allocating thread descriptor and guard size.  */
 #define MINIMAL_REST_STACK	16384
 
+/*
+ * Make sure there are paddings after struct pthread.
+ *
+ * As of glibc 2.42, the size of `struct pthread' is 1824 bytes, which can
+ * fit right into 32-byte boundary.
+ * However the stack guard and the point guard must be inserted right after
+ * the structure, into the padding space. When the alignment is 32, there
+ * will be no extra space for the stack guard and the pointer guard, thus
+ * these two will be inserted into existing fields.
+ * This effectively corrupts the struct pthread.
+ */
+#define TCB_ALIGNMENT		64
 
 /* Location of current stack frame.  */
 #define CURRENT_STACK_FRAME	__stack_pointer
