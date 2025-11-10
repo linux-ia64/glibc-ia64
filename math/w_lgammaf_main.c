@@ -33,7 +33,12 @@ LGFUNC (__lgammaf) (float x)
 
 	return y;
 }
-compat_symbol (libm, LGFUNC (__lgammaf), lgammaf, LGAMMA_OLD_VER);
+# if USE_AS_COMPAT
+compat_symbol (libm, __lgammaf_compat, lgammaf, LGAMMA_OLD_VER);
+# else
+versioned_symbol (libm, __lgammaf, lgammaf, LGAMMA_NEW_VER);
+libm_alias_float_other (__lgamma, lgamma)
+# endif
 # if GAMMA_ALIAS
 strong_alias (LGFUNC (__lgammaf), __gammaf)
 weak_alias (__gammaf, gammaf)
