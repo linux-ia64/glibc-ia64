@@ -36,8 +36,6 @@ SOFTWARE.
 #include <math.h>
 #include <libm-alias-finite.h>
 #include <limits.h>
-#include <libm-alias-float.h>
-#include <math-svid-compat.h>
 #include <math-narrow-eval.h>
 #include "math_config.h"
 
@@ -110,7 +108,7 @@ as_ln (double x)
 }
 
 float
-__lgammaf_r (float x, int *signgamp)
+__ieee754_lgammaf_r (float x, int *signgamp)
 {
   static const struct
   {
@@ -163,7 +161,7 @@ __lgammaf_r (float x, int *signgamp)
       if (x <= 0.0f)
 	{
 	  *signgamp = asuint (x) >> 31 ? -1 : 1;
-	  return __math_divzerof (0);
+	  return 1.0f / 0.0f;
 	}
       if (x == 1.0f || x == 2.0f)
 	{
@@ -356,13 +354,4 @@ __lgammaf_r (float x, int *signgamp)
     }
   return r;
 }
-strong_alias (__lgammaf_r, __ieee754_lgammaf_r)
-libm_alias_finite (__lgammaf_r, __lgammaf_r)
-#if LIBM_SVID_COMPAT
-versioned_symbol (libm, __lgammaf_r, lgammaf_r, GLIBC_2_43);
-# if __HAVE_FLOAT32 && !__HAVE_DISTINCT_FLOAT32
-weak_alias (__lgammaf_r, lgammaf32_r)
-# endif
-#else
-libm_alias_float_r (__lgamma, lgamma, _r)
-#endif
+libm_alias_finite (__ieee754_lgammaf_r, __lgammaf_r)
