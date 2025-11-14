@@ -221,4 +221,4 @@ CEIL_UNORM:
 ;;
 
 GLOBAL_LIBM_END(ceil)
-libm_alias_double_other (ceil, ceil)
+libm_alias_double (ceil, __ceil)
