@@ -43,7 +43,6 @@ ENTRY(strcmp)
 	cmp.eq	p6, p0 = r0, r0		// set p6
 	;;
 	cmp.ne.and p6, p0 = val1, r0
-	cmp.ne.and p6, p0 = val2, r0
 	cmp.eq.and p6, p0 = val1, val2
 (p6)	br.cond.sptk .loop
 	sub	ret0 = val1, val2
