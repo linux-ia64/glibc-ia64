@@ -17,7 +17,7 @@
 
 #include <ia64intrin.h>
 
-#define __HAVE_64B_ATOMICS 1
+#define USE_64B_ATOMICS 1
 #define USE_ATOMIC_COMPILER_BUILTINS 0
 
 /* XXX Is this actually correct?  */
