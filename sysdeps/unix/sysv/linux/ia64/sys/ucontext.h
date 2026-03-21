@@ -72,10 +72,7 @@ typedef struct
     unsigned long int __ctx(sc_mask);
   } mcontext_t;
 
-#if __GNUC_PREREQ (3, 5)
-# define _SC_GR0_OFFSET	\
-	__builtin_offsetof (mcontext_t, __ctx(sc_gr)[0])
-#elif defined __GNUC__
+#ifdef __GNUC__
 # define _SC_GR0_OFFSET	\
 	(((char *) &((mcontext_t *) 0)->__ctx(sc_gr)[0]) - (char *) 0)
 #else
