@@ -205,21 +205,11 @@ __ieee754_lgammaf_r (float x, int *signgamp)
     {
       if (ax > 0x1.afc1ap+1f)
 	{
-	  if (__glibc_unlikely (x >= 0x1.895f1cp+121f))
-	    {
-	      /* for x=0x1.895f1cp+121, lgamma(x) < 2^128, thus there is no
-		 overflow for rounding towards zero or downwards.
-		 The following expression overflows for x > 0x1.895f1cp+121
-		 or x = 0x1.895f1cp+121 and rounding to nearest or away,
-		 and does not overflow for x = 0x1.895f1cp+121 and rounding
-		 towards zero */
-	      float r = fmaf (x, 0x1.4d3398p+6f, 0x1.10f35ep+103f);
-	      if (x > 0x1.895f1cp+121f
-		  || (x == 0x1.895f1cp+121f
-		      && math_narrow_eval (x * 5.0f) >= 0x1.ebb6e4p+123))
-		return __math_oflowf (0);
-	      return r;
-	    }
+	  if (__glibc_unlikely (x > 0x1.895f1cp+121f))
+	    return math_narrow_eval (0x1p127f * 0x1p127f);
+	  /* |x|>=2**23, must be -integer */
+	  if (__glibc_unlikely (x < 0.0f && ax > 0x1p+23f))
+	    return ax / 0.0f;
 	  double lz = as_ln (z);
 	  f = (z - 0.5) * (lz - 1) + 0x1.acfe390c97d69p-2;
 	  if (ax < 0x1.0p+20f)
@@ -281,7 +271,7 @@ __ieee754_lgammaf_r (float x, int *signgamp)
 	    {
 	      int ni = floorf (-2 * x);
 	      if ((ni & 1) == 0 && ni == -2 * x)
-		return __math_divzerof (0);
+		return 1.0f / 0.0f;
 	    }
 	  const double c0 = 0x1.3cc0e6a0106b3p+2;
 	  static const double rd[] =
