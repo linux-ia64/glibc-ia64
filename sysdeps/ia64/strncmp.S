@@ -48,6 +48,7 @@
 
 ENTRY(strncmp)
 	alloc	r2 = ar.pfs, 3, 0, 0, 0
+	;;
 	adds	tmp = 1, sx1		// pre-compute sx1 + 1 for both sentinel (sx1 + n + 1) and sy1 (sx1 + 1)
 	mov	one = 1
 	mov	ret0 = r0
