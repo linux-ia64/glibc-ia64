@@ -395,7 +395,7 @@ elf_machine_rela (struct link_map *map, struct r_scope_elem *scope[],
 	  else if (R_IA64_TYPE (r_type) == R_IA64_TYPE (R_IA64_TPREL64LSB))
 	    {
 #ifndef RTLD_BOOTSTRAP
-	      CHECK_STATIC_TLS (map, sym_map);
+	      CHECK_STATIC_TLS (map, sym_map, sym);
 #endif
 	      value += sym_map->l_tls_offset - sym_map->l_addr;
 	    }
